@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy, Output, EventEmitter } from '@angular/core';
 import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
 import { CategoryService } from '../../shared/services/category.service';
-import { Category } from '../../shared/models/Category';
+import { Category } from '../../shared/models/category';
 @Component({
   selector: 'app-category',
   templateUrl: './category.component.html',
