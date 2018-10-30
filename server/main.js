@@ -18,7 +18,7 @@ const app = express();
 
 const API_URI = "/api";
 app.use(cors());
-
+app.use(passport.initialize());
 //set GOOGLE_APPLICATION_CREDENTIALS=/Users/phangty/Projects/paf-day26/onfire.json
 // Initialize Firebase
 const credFile = process.env.Svc_Cred_File || "./ngx-blog.json";

@@ -18,7 +18,7 @@ export class CategoryComponent implements OnInit {
 
   ngOnInit() {
     this.catSvc.getCategories().subscribe((result)=>{
-      console.log(result);
+      console.log(">>>> cat result" + result);
       this.categories = result;
     })
   }
