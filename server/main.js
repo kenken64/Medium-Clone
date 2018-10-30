@@ -188,15 +188,20 @@ app.post(API_URI + '/login', bodyParser.urlencoded({ extended: true}), bodyParse
 })
 
 app.get(API_URI + '/user', auth.required, function(req, res, next){
-    console.log(req.payload.id);
+    console.log(">>>>>> token !" + auth.getToken(req));
+    console.log("req.payload" + JSON.stringify(req.payload));
     return res.json({});
 });
 
 app.post(API_URI + '/changePassword', (req, res)=>{
+    console.log(">>>>>> token !" + auth.getToken(req));
+    console.log("req.payload" + JSON.stringify(req.payload));
     res.status(200).json({});
 })
 
 app.post(API_URI + '/resetPassword', (req, res)=>{
+    console.log(">>>>>> token !" + auth.getToken(req));
+    console.log("req.payload" + JSON.stringify(req.payload));
     res.status(200).json({});
 })
 

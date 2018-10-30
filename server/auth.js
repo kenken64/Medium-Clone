@@ -6,8 +6,11 @@ function getTokenFromHeader(req){
     console.log(req.headers.authorization.split(' ')[1]);
     return req.headers.authorization.split(' ')[1];
   }
-
   return null;
+}
+
+var getToken = function(req){
+  return getTokenFromHeader(req);
 }
 
 var auth = {
@@ -21,7 +24,8 @@ var auth = {
     userProperty: 'payload',
     credentialsRequired: false,
     getToken: getTokenFromHeader
-  })
+  }),
+  getToken: getToken
 };
 
 module.exports = auth;
