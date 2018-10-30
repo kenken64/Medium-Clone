@@ -9,10 +9,12 @@ import { map ,  distinctUntilChanged } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class SecurityService {
-  private registerRootApiUrl = `/api/register`;
-  private loginRootApiUrl = `/api/login`;
-  private resetPasswordRootApiUrl = `/api/resetPassword`;
-  private changePasswordRootApiUrl = `/api/changePassword`;
+  private API:string = `/api`
+  private registerRootApiUrl = `${this.API}/register`;
+  private loginRootApiUrl = `${this.API}/login`;
+  private resetPasswordRootApiUrl = `${this.API}/resetPassword`;
+  private isResetIdOkRootApiUrl = `${this.API}/isResetIdOk`;
+  private changePasswordRootApiUrl = `${this.API}/changePassword`;
 
   private currentUserSubject = new BehaviorSubject<User>({} as User);
   public currentUser = this.currentUserSubject.asObservable().pipe(distinctUntilChanged());
@@ -52,8 +54,13 @@ export class SecurityService {
     return this.http.post(this.changePasswordRootApiUrl, user);
   }
 
-  resetPassword(user){
-    return this.http.post(this.resetPasswordRootApiUrl, user);
+  resetPassword(email){
+    console.log(email);
+    return this.http.post(this.resetPasswordRootApiUrl, email);
+  }
+
+  isResetIdValid(resetId){
+    return this.http.get(`${this.isResetIdOkRootApiUrl}/${resetId}`);
   }
 
   getCurrentUser(): User {

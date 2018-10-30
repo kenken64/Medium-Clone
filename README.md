@@ -7,6 +7,7 @@ CREATE TABLE `user` (
   `password` text,
   `salt` text,
   `fullname` varchar(1000) DEFAULT NULL,
+  `reset_id` varchar(1000) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;

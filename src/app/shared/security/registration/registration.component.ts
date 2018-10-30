@@ -18,7 +18,7 @@ export class RegistrationComponent implements OnInit {
     private fb: FormBuilder,
     private snackSvc: MatSnackBar) { 
     this.registrationForm = fb.group({
-      email: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.pattern(this.PASSWORD_PATTERN)]],
       confirmPassword: ['', Validators.required],
       fullName: ['', Validators.required]

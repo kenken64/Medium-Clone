@@ -5,7 +5,6 @@ import { User } from '../../models/user';
 import { MatSnackBar } from '@angular/material';
 import { Router } from '@angular/router';
 
-
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',

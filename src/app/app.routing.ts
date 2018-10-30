@@ -14,11 +14,16 @@ import { ChangePasswordComponent } from './shared/security/change-password/chang
 import { ResetPasswordComponent } from './shared/security/reset-password/reset-password.component';
 import { AuthGuard } from './shared/services/auth-guard.service';
 import { NoAuthGuard } from './shared/services/no-auth-guard.service';
+import { ResetChangepasswordComponent } from './shared/security/reset-changepassword/reset-changepassword.component';
 
 const appRoutes = [
     {
-        path: 'Article',
-        component: ArticleComponent
+        path: 'Article/:resetId',
+        component: ArticleComponent,
+    },
+    {
+        path: 'ResetChngPassword',
+        component: ResetChangepasswordComponent,
     },
     {
         path: 'Author',

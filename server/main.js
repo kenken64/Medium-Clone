@@ -12,8 +12,10 @@ const express = require('express'),
       passport = require('passport'),
       LocalStrategy = require('passport-local').Strategy,
       auth = require('./auth'),
-      cors = require('cors');
+      cors = require('cors'),
+      mailgun = require('mailgun.js');
 
+var mg = mailgun.client({username: 'api', key: process.env.MAILGUN_API_KEY || 'key-yourkeyhere'});
 const app = express();
 
 const API_URI = "/api";
@@ -41,6 +43,9 @@ var categoriesCollection = db.collection('categories');
 
 const sqlInsertUser = "INSERT INTO USER (email, password, fullname, salt) VALUES (?, ?, ?, ?)";
 const sqlFindUserByEmail = "SELECT * FROM USER WHERE email = ?";
+const sqlFindUserByEmailAndResetId = "SELECT count(*) as exist FROM USER WHERE email = ? and reset_id is NULL";
+const sqlFindResetId = "SELECT count(*) as exist FROM USER WHERE reset_id = ?";
+const sqlUpdateResetIdByEmail = "UPDATE USER SET reset_id = ? WHERE email = ?";
 
 var pool = mysql.createPool({
     host: process.env.DB_HOST,
@@ -80,6 +85,10 @@ var makeQuery = (sql, pool)=>{
 
 var insertUser = makeQuery(sqlInsertUser, pool);
 var findUserByEmail = makeQuery(sqlFindUserByEmail, pool);
+var findUserByEmailAndResetId = makeQuery(sqlFindUserByEmailAndResetId, pool);
+var updateResetIdByEmail = makeQuery(sqlUpdateResetIdByEmail, pool);
+var findResetId = makeQuery(sqlFindResetId, pool);
+
 
 //export Google_Application_Credentials
 const gStorage = new Storage({
@@ -199,9 +208,62 @@ app.post(API_URI + '/changePassword', (req, res)=>{
     res.status(200).json({});
 })
 
-app.post(API_URI + '/resetPassword', (req, res)=>{
+app.post(API_URI + '/resetChangePassword', (req, res)=>{
     console.log(">>>>>> token !" + auth.getToken(req));
     console.log("req.payload" + JSON.stringify(req.payload));
+    res.status(200).json({});
+})
+
+app.get(API_URI + '/isResetIdOk/:resetId', (req, res)=>{
+    console.log(">>>>>> token !" + auth.getToken(req));
+    console.log("req.payload" + JSON.stringify(req.payload));
+    let val = req.params.resetId
+    findResetId(val).then((result)=>{
+        console.log(result[0].exist);
+        let countValue = parseInt(result[0].exist);
+        if(countValue > 0){
+            res.status(200).json({exist: true});
+        }else{
+            res.status(500).json({error:'zero'});
+        }
+    }).catch((error)=>{
+        console.log(error);
+        res.status(500).json(error);
+    });
+    
+})
+
+app.post(API_URI + '/resetPassword', bodyParser.urlencoded({ extended: true}), bodyParser.json({ limit: "50MB" }), (req, res)=>{
+    console.log(">>>>>> token !" + auth.getToken(req));
+    console.log("req.payload" + JSON.stringify(req.payload));
+    let email = req.body.email;
+    console.log(email);
+    findUserByEmailAndResetId([email]).then((result1)=>{
+        console.log(result1[0].exist);
+        let countValue = parseInt(result1[0].exist);
+        if(countValue > 0){
+            console.log(countValue);
+            let resetId = uuidv4();
+            updateResetIdByEmail([resetId,email]).then((result2)=>{
+                console.log(result2);
+                mg.messages.create(process.env.MAILGUN_SANDBOX, {
+                    from: "Excited User <mailgun@sandbox-123.mailgun.org>",
+                    to: [email],
+                    subject: "Welcome to Ngx Blog",
+                    text: `Hi Change your password ! http://localhost:4200/Article/${resetId}`,
+                    html: `<h1>Click <a href='http://localhost:4200/Article/${resetId}'>here</a> to change your password !</h1>`
+                  })
+                  .then(msg => console.log(msg)) // logs response data
+                  .catch(err => console.log(err)); // logs any error
+            }).catch((error)=>{
+                console.log(error);
+                res.status(500).json(error);
+            });
+        }
+    }).catch((error)=>{
+        console.log(error);
+        res.status(500).json(error);
+    });
     res.status(200).json({});
 })
 
