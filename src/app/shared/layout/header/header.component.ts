@@ -13,6 +13,7 @@ export class HeaderComponent implements OnInit {
     private userService: SecurityService) { }
 
   ngOnInit() {
+    
   }
 
   navigateToAuthor(){

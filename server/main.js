@@ -47,6 +47,7 @@ const sqlFindUserByEmailAndResetId = "SELECT count(*) as exist FROM USER WHERE e
 const sqlFindResetId = "SELECT count(*) as exist FROM USER WHERE reset_id = ?";
 const sqlUpdateResetIdByEmail = "UPDATE USER SET reset_id = ? WHERE email = ?";
 const sqlUpdatePasswordByResetId = "UPDATE USER SET password = ?, salt = ?, reset_id = NULL WHERE reset_id = ?";
+const sqlUpdateUserPassword = "UPDATE USER SET password = ?, salt = ? WHERE email = ?";
 
 var pool = mysql.createPool({
     host: process.env.DB_HOST,
@@ -90,6 +91,7 @@ var findUserByEmailAndResetId = makeQuery(sqlFindUserByEmailAndResetId, pool);
 var updateResetIdByEmail = makeQuery(sqlUpdateResetIdByEmail, pool);
 var findResetId = makeQuery(sqlFindResetId, pool);
 var updatePasswordByResetId = makeQuery(sqlUpdatePasswordByResetId, pool);
+var updateUserPassword = makeQuery(sqlUpdateUserPassword, pool);
 
 //export Google_Application_Credentials
 const gStorage = new Storage({
@@ -197,16 +199,92 @@ app.post(API_URI + '/login', bodyParser.urlencoded({ extended: true}), bodyParse
     
 })
 
+
+
 app.get(API_URI + '/user', auth.required, function(req, res, next){
     console.log(">>>>>> token !" + auth.getToken(req));
     console.log("req.payload" + JSON.stringify(req.payload));
     return res.json({});
 });
 
-app.post(API_URI + '/changePassword', auth.required, (req, res)=>{
-    console.log(">>>>>> token !" + auth.getToken(req));
-    console.log("req.payload" + JSON.stringify(req.payload));
-    res.status(200).json({});
+
+
+// POST: /api/changePassword
+// Requires: user.id, user.newpassword, user.password
+app.post(API_URI + '/changePassword', auth.required, bodyParser.urlencoded({ extended: true }), bodyParser.json({ limit: "50MB" }), (req, res) => {
+    console.log("Post backend change password");
+    let changePasswordForm = req.body;
+    let changePasswordObj = { ...changePasswordForm };
+    console.log(JSON.stringify(changePasswordObj));
+    // Additional validation on server side
+
+    // Prevent empty password
+    if (changePasswordObj.newpassword.length == 0) {
+        console.log("Fail. New password cannot be empty.");
+        res.status(500).json({ result: "Fail. New password cannot be empty." });
+        return;
+    }
+    // Prevent empty password
+    if (changePasswordObj.password.length == 0) {
+        console.log("Fail. Current password cannot be empty.");
+        res.status(500).json({ result: "Fail. Current password cannot be empty." });
+        return;
+    }
+    const regex = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{12,}$/;
+    let m;
+    // Prevent invalid password
+    if ((m = regex.exec(changePasswordObj.password)) === null) {
+        console.log("Fail. Current password failed validation.");
+        res.status(500).json({ result: "Fail. Current password failed validation." });
+        return;
+    }
+    // Prevent invalid password
+    if ((m = regex.exec(changePasswordObj.newpassword)) === null) {
+        console.log("Fail. New password failed validation.");
+        res.status(500).json({ result: "Fail. New password failed validation." });
+        return;
+    }
+
+    let convertSecObj = convertPasswordToHash(changePasswordObj.newpassword);
+    changePasswordObj.newpassword = convertSecObj.hash;
+    changePasswordObj.salt = convertSecObj.salt;
+    
+    // Check old password is valid.
+    // To protect against the scenario where user is already logged in, but someone else use his account and tries to change password.
+    let oldPassword = changePasswordObj.password;
+    console.log("oldPassword =", oldPassword);
+    //console.log("changePasswordObj.id =", changePasswordObj.id);
+    findUserByEmail([req.payload.username]).then((result) => {
+        if (result.length > 0) {
+            if (isPasswordValid(oldPassword, result[0].password, result[0].salt)) {
+                console.log("ITS MATCH !");
+                // Set the new password to password field.
+                changePasswordObj.password = changePasswordObj.newpassword;
+                // "UPDATE user SET password = ? , salt = ? WHERE id = ?"
+                updateUserPassword([changePasswordObj.password,
+                changePasswordObj.salt,
+                req.payload.username]).then((results) => {
+                    console.log("Success! results =>", results);
+                    res.status(200).json({ result: "Success!" });
+                }).catch((error) => {
+                    console.log("Error! error =>", error);
+                    res.status(500).json(error);
+                });
+            } else {
+                console.log("Fail. Current password incorrect. result =>", result);
+                res.status(500).json({ result: "Fail. Current password incorrect." });
+                return;
+            }
+        } else {
+            console.log("Fail. No record found. result =>", result);
+            res.status(500).json({ result: "Fail. No record found." });
+            return;
+        }
+    }).catch((error) => {
+        console.log(error);
+        res.status(500).json(error);
+        return;
+    })
 })
 
 

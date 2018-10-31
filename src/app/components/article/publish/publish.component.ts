@@ -9,6 +9,25 @@ import { Author } from '../../../shared/models/author';
 import { Category } from '../../../shared/models/category'
 import { Article } from '../../../shared/models/article';
 
+export interface PeriodicElement {
+  name: string;
+  position: number;
+  weight: number;
+  symbol: string;
+}
+const ELEMENT_DATA: PeriodicElement[] = [
+  {position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H'},
+  {position: 2, name: 'Helium', weight: 4.0026, symbol: 'He'},
+  {position: 3, name: 'Lithium', weight: 6.941, symbol: 'Li'},
+  {position: 4, name: 'Beryllium', weight: 9.0122, symbol: 'Be'},
+  {position: 5, name: 'Boron', weight: 10.811, symbol: 'B'},
+  {position: 6, name: 'Carbon', weight: 12.0107, symbol: 'C'},
+  {position: 7, name: 'Nitrogen', weight: 14.0067, symbol: 'N'},
+  {position: 8, name: 'Oxygen', weight: 15.9994, symbol: 'O'},
+  {position: 9, name: 'Fluorine', weight: 18.9984, symbol: 'F'},
+  {position: 10, name: 'Neon', weight: 20.1797, symbol: 'Ne'},
+];
+
 @Component({
   selector: 'app-publish',
   templateUrl: './publish.component.html',
@@ -17,6 +36,8 @@ import { Article } from '../../../shared/models/article';
 export class PublishComponent implements OnInit {
   authors: Author[]= [];
   categories: Category[] = [];
+  displayedColumns: string[] = ['position', 'name', 'weight', 'symbol'];
+  dataSource = ELEMENT_DATA;
   
   publishArticleForm = new FormGroup({
     title: new FormControl('', Validators.required),
@@ -52,13 +73,19 @@ export class PublishComponent implements OnInit {
       publish_date: new Date(),
       article: this.publishArticleForm.get("article").value,
     }
-
-    this.articleSvc.publishArticle(article).subscribe((result)=>{
-      console.log(result);
-      let snackBarRef = this.snackSvc.open("Article added", 'Done', {
+    if(this.publishArticleForm.valid){
+      this.articleSvc.publishArticle(article).subscribe((result)=>{
+        console.log(result);
+        let snackBarRef = this.snackSvc.open("Article added", 'Done', {
+          duration: 3000
+        });
+      })
+    }else{
+      let snackBarRef = this.snackSvc.open("Invalid", 'Done', {
         duration: 3000
       });
-    })
+    }
+    
   }
 
 }

@@ -24,3 +24,44 @@
     left: 50%;
     margin-left: -4em;
 }
+
+.wrapper {
+    display: flex;  
+    flex-flow: row wrap;
+    font-weight: bold;
+    text-align: center;
+  }
+  
+  .wrapper > * {
+    padding: 10px;
+    flex: 1 100%;
+  }
+  
+  
+.main {
+    text-align: left;
+}
+
+.aside-1 {
+    justify-content: center;
+    flex-direction: column-reverse;
+}
+
+
+@media all and (min-width: 600px) {
+.aside { flex: 1 auto; }
+}
+
+@media all and (min-width: 800px) {
+.aside-2 { order: 1; } 
+.aside-1 { order: 2; } 
+.main    { order: 3; }
+}
+
+body {
+padding: 2em; 
+}
+
+table {
+  width: 100%;
+}

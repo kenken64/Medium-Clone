@@ -5,4 +5,5 @@ export interface User{
     fullName?: string;
     token?: string;
     resetId?: string;
+    newpassword?: string;
 }
