@@ -18,16 +18,15 @@ export class EditCategoryComponent implements OnInit,OnDestroy {
   name: string;
 
   constructor(private catSvc: CategoryService) { 
-    
-  }
-
-  ngAfterViewInit()	{
     this.subscription = this.catSvc.getEditCategoryName$().subscribe(
       name => {
         this.name = name;
     });
   }
 
+  ngAfterViewInit()	{
+    
+  }
 
   ngOnInit() {
     

@@ -9,7 +9,7 @@ import { Category } from '../../shared/models/category';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CategoryComponent implements OnInit {
-  categories: Category[] = [];
+  categories: Category[];
   isNew: boolean = true;
   currentEditIdx: number = 0;
   public config: PerfectScrollbarConfigInterface = {};
@@ -17,6 +17,10 @@ export class CategoryComponent implements OnInit {
   constructor(private catSvc: CategoryService) { }
 
   ngOnInit() {
+    
+  }
+
+  ngAfterViewInit()	{
     this.catSvc.getCategories().subscribe((result)=>{
       console.log(">>>> cat result" + result);
       this.categories = result;
