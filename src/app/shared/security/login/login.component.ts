@@ -36,13 +36,19 @@ export class LoginComponent implements OnInit {
       password: password
     }
     //first hash to the server side
-    this.securitySvc.login(loginUser).subscribe((result)=>{
-      console.log(result);
-      let snackBarRef = this.snackSvc.open("Login Successful!", 'Done', {
+    if(this.loginForm.valid){
+      this.securitySvc.login(loginUser).subscribe((result)=>{
+        console.log(result);
+        let snackBarRef = this.snackSvc.open("Login Successful!", 'Done', {
+          duration: 3000
+        });
+        this.router.navigate(['/Article']);
+      })
+    }else{
+      let snackBarRef = this.snackSvc.open("Invalid!", 'Done', {
         duration: 3000
       });
-      this.router.navigate(['/Article']);
-    })
+    }
   }
 
 }

@@ -17,7 +17,7 @@
         <perfect-scrollbar style="max-width: 600px; max-height: 400px;" [config]="config">
             <div class="container">
                 <ul *ngFor="let category of categories || async ; let i = index">
-                  <li><button mat-flat-button (click)="doEdit(i, category.result.name)">1{{category.result.name}}
+                  <li><button mat-flat-button (click)="doEdit(i, category.result.name)">{{category.result.name}}
                     </button>
                   </li>
                 </ul>

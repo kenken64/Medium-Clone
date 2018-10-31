@@ -42,12 +42,19 @@ export class RegistrationComponent implements OnInit {
       fullName: fullName
     }
     ///first hash to the server side
-    this.securitySvc.register(registerUser).subscribe((result)=>{
-      console.log(result);
-      let snackBarRef = this.snackSvc.open("Registration Ok!", 'Done', {
+    if(this.registrationForm.valid){
+      this.securitySvc.register(registerUser).subscribe((result)=>{
+        console.log(result);
+        let snackBarRef = this.snackSvc.open("Registration Ok!", 'Done', {
+          duration: 3000
+        });
+      })
+    }else{
+      let snackBarRef = this.snackSvc.open("Invalid !", 'Done', {
         duration: 3000
       });
-    })
+    }
+    
   }
 
 }

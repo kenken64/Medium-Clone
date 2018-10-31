@@ -46,6 +46,7 @@ const sqlFindUserByEmail = "SELECT * FROM USER WHERE email = ?";
 const sqlFindUserByEmailAndResetId = "SELECT count(*) as exist FROM USER WHERE email = ? and reset_id is NULL";
 const sqlFindResetId = "SELECT count(*) as exist FROM USER WHERE reset_id = ?";
 const sqlUpdateResetIdByEmail = "UPDATE USER SET reset_id = ? WHERE email = ?";
+const sqlUpdatePasswordByResetId = "UPDATE USER SET password = ?, salt = ?, reset_id = NULL WHERE reset_id = ?";
 
 var pool = mysql.createPool({
     host: process.env.DB_HOST,
@@ -88,7 +89,7 @@ var findUserByEmail = makeQuery(sqlFindUserByEmail, pool);
 var findUserByEmailAndResetId = makeQuery(sqlFindUserByEmailAndResetId, pool);
 var updateResetIdByEmail = makeQuery(sqlUpdateResetIdByEmail, pool);
 var findResetId = makeQuery(sqlFindResetId, pool);
-
+var updatePasswordByResetId = makeQuery(sqlUpdatePasswordByResetId, pool);
 
 //export Google_Application_Credentials
 const gStorage = new Storage({
@@ -170,9 +171,9 @@ app.post(API_URI + '/login', bodyParser.urlencoded({ extended: true}), bodyParse
         return res.status(422).json({errors: {email: "can't be blank"}});
       }
     
-      if(!password){
-        return res.status(422).json({errors: {password: "can't be blank"}});
-      }
+    if(!password){
+    return res.status(422).json({errors: {password: "can't be blank"}});
+    }
     
     passport.authenticate('local', {session: false}, function(err, user, info){
         if(err){ return next(err); }
@@ -202,16 +203,27 @@ app.get(API_URI + '/user', auth.required, function(req, res, next){
     return res.json({});
 });
 
-app.post(API_URI + '/changePassword', (req, res)=>{
+app.post(API_URI + '/changePassword', auth.required, (req, res)=>{
     console.log(">>>>>> token !" + auth.getToken(req));
     console.log("req.payload" + JSON.stringify(req.payload));
     res.status(200).json({});
 })
 
-app.post(API_URI + '/resetChangePassword', (req, res)=>{
+
+app.post(API_URI + '/resetChangePassword', bodyParser.urlencoded({ extended: true}), bodyParser.json({ limit: "50MB" }), (req, res)=>{
+    console.log("resetChangePassword");
     console.log(">>>>>> token !" + auth.getToken(req));
     console.log("req.payload" + JSON.stringify(req.payload));
-    res.status(200).json({});
+    console.log(req.body);
+    let resetPasswordBody = {...req.body};
+    let hashPasswordFromInput = convertPasswordToHash(resetPasswordBody.password);
+    updatePasswordByResetId([hashPasswordFromInput.hash, hashPasswordFromInput.salt, resetPasswordBody.resetId]).then((result)=>{
+        console.log(result);
+        res.status(200).json(result);
+    }).catch((error)=>{
+        console.log(error);
+        res.status(500).json(error);
+    });
 })
 
 app.get(API_URI + '/isResetIdOk/:resetId', (req, res)=>{
@@ -224,7 +236,7 @@ app.get(API_URI + '/isResetIdOk/:resetId', (req, res)=>{
         if(countValue > 0){
             res.status(200).json({exist: true});
         }else{
-            res.status(500).json({error:'zero'});
+            res.status(500).json({exist:false});
         }
     }).catch((error)=>{
         console.log(error);
@@ -246,19 +258,22 @@ app.post(API_URI + '/resetPassword', bodyParser.urlencoded({ extended: true}), b
             let resetId = uuidv4();
             updateResetIdByEmail([resetId,email]).then((result2)=>{
                 console.log(result2);
+                resetPassword_url = process.env.APP_DOMAIN;
                 mg.messages.create(process.env.MAILGUN_SANDBOX, {
                     from: "Excited User <mailgun@sandbox-123.mailgun.org>",
                     to: [email],
                     subject: "Welcome to Ngx Blog",
-                    text: `Hi Change your password ! http://localhost:4200/Article/${resetId}`,
-                    html: `<h1>Click <a href='http://localhost:4200/Article/${resetId}'>here</a> to change your password !</h1>`
+                    text: `Hi Change your password ! ${resetPassword_url}/Article/${resetId}`,
+                    html: `<h1>Click <a href='${resetPassword_url}/Article/${resetId}'>here</a> to change your password !</h1>`
                   })
-                  .then(msg => console.log(msg)) // logs response data
+                  .then(msg => console.log(msg)) 
                   .catch(err => console.log(err)); // logs any error
             }).catch((error)=>{
                 console.log(error);
                 res.status(500).json(error);
             });
+        }else{
+            res.status(500).json({error: 'record not found'});
         }
     }).catch((error)=>{
         console.log(error);

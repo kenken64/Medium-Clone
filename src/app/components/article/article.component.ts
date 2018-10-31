@@ -24,7 +24,7 @@ export class ArticleComponent implements OnInit {
                 this.userService.isResetIdValid(params.resetId).subscribe((result)=>{
                     console.log(result);
                     if(result.exist){
-                        this.router.navigate(['/ResetChngPassword'])
+                        this.router.navigate([`/ResetChngPassword/${params.resetId}`])
                     }else{
                         this.router.navigate(['/Article'])
                     }

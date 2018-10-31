@@ -44,11 +44,18 @@ export class AddAuthorComponent implements OnInit {
       profile: this.addAuthorForm.get("profile").value,
       thumbnail_url: this.multipleFilesUpload[0],
     }
-    this.authorSvc.addAuthor(authorObj).subscribe((result)=>{
-      let snackBarRef = this.snackSvc.open("Author added", 'Done', {
+    if(this.addAuthorForm.valid){
+      this.authorSvc.addAuthor(authorObj).subscribe((result)=>{
+        let snackBarRef = this.snackSvc.open("Author added", 'Done', {
+          duration: 3000
+        });
+      })
+    }else{
+      let snackBarRef = this.snackSvc.open("Invalid!", 'Done', {
         duration: 3000
       });
-    })
+    }
+    
   }
 
   doneUpload(evt){

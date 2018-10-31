@@ -22,7 +22,7 @@ const appRoutes = [
         component: ArticleComponent,
     },
     {
-        path: 'ResetChngPassword',
+        path: 'ResetChngPassword/:resetId',
         component: ResetChangepasswordComponent,
     },
     {

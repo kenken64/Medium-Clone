@@ -45,7 +45,7 @@ import { RegistrationComponent } from './shared/security/registration/registrati
 import { LoginComponent } from './shared/security/login/login.component';
 import { ChangePasswordComponent } from './shared/security/change-password/change-password.component';
 import { ResetPasswordComponent } from './shared/security/reset-password/reset-password.component';
-
+import { ResetChangepasswordComponent } from './shared/security/reset-changepassword/reset-changepassword.component';
 import { ShowAuthedDirective } from './shared/directives/show-authed.directive';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { HttpTokenInterceptor } from './http.token.interceptor';
@@ -67,7 +67,8 @@ import { HttpTokenInterceptor } from './http.token.interceptor';
     LoginComponent, 
     ChangePasswordComponent, 
     ResetPasswordComponent,
-    ShowAuthedDirective
+    ShowAuthedDirective,
+    ResetChangepasswordComponent
   ],
 
   imports: [

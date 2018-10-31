@@ -15,6 +15,7 @@ export class SecurityService {
   private resetPasswordRootApiUrl = `${this.API}/resetPassword`;
   private isResetIdOkRootApiUrl = `${this.API}/isResetIdOk`;
   private changePasswordRootApiUrl = `${this.API}/changePassword`;
+  private changePasswordResetIdRootApiUrl = `${this.API}/resetChangePassword`;
 
   private currentUserSubject = new BehaviorSubject<User>({} as User);
   public currentUser = this.currentUserSubject.asObservable().pipe(distinctUntilChanged());
@@ -52,6 +53,12 @@ export class SecurityService {
 
   changePassword(user){
     return this.http.post(this.changePasswordRootApiUrl, user);
+  }
+
+  changePasswordWithResetId(user){
+    console.log("changePasswordWithResetId" + user);
+    console.log(this.changePasswordResetIdRootApiUrl);
+    return this.http.post(this.changePasswordResetIdRootApiUrl, user);
   }
 
   resetPassword(email){
