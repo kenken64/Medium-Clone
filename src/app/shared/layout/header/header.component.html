@@ -16,10 +16,6 @@
                 <mat-icon>person_pin</mat-icon>
                 <span>Login</span>
         </button>
-        <button *appShowAuthed="true" mat-menu-item (click)="navigateToChangePassword()">
-                <mat-icon>star</mat-icon>
-                <span>Change Password</span>
-        </button>
         <button *appShowAuthed="false" mat-menu-item (click)="navigateToResetPassword()">
                 <mat-icon>change_history</mat-icon>
                 <span>Reset Password</span>
@@ -35,6 +31,10 @@
         <button *appShowAuthed="true" mat-menu-item (click)="navigateToPublish()">
             <mat-icon>publish</mat-icon>
             <span>Publish Article</span>
+        </button>
+        <button *appShowAuthed="true" mat-menu-item (click)="navigateToChangePassword()">
+                <mat-icon>star</mat-icon>
+                <span>Change Password</span>
         </button>
         <button *appShowAuthed="true" mat-menu-item (click)="logout()">
             <mat-icon>logout</mat-icon>
