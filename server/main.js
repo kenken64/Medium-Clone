@@ -449,21 +449,8 @@ app.get(API_URI + '/articles', (req, res) => {
     articlesCollection
     .get()
     .then(snapshot => {
-        // No need to push to an array because we're using map here to create a new array
         let snapshotPromises = snapshot.docs.map(doc => {
-            //const authorId = doc.data().author;
             let articleData = doc.data();
-            /*
-            if (typeof authorId !== 'undefined') {
-                //const authorRef = authorsCollection.doc(authorId);
-                return authorsCollection.
-                    get().then(authorSnapshot => {
-                    articleData.authorName = authorSnapshot.data().firstname + ' ' + authorSnapshot.data().lastname;
-                    return articleData;
-                });
-            } else {
-                return articleData;
-            }*/
             return articleData;
         });
 
@@ -487,7 +474,6 @@ app.get(API_URI + '/articlesByAuthor', auth.required, bodyParser.urlencoded({ ex
     .where('author', '==', req.payload.username)
     .get()
     .then(snapshot => {
-        // No need to push to an array because we're using map here to create a new array
         let snapshotPromises = snapshot.docs.map(doc => {
             const authorEmail = doc.data().author;
             let articleData = doc.data();
@@ -497,12 +483,6 @@ app.get(API_URI + '/articlesByAuthor', auth.required, bodyParser.urlencoded({ ex
                 return authorsCollection
                     .where('email', '==', req.payload.username)
                     .get().then(authorSnapshot => {
-                    //console.log(authorSnapshot.data());
-                    /*
-                    if(typeof(authorSnapshot.data()) !== 'undefined'){
-                        articleData.authorName = authorSnapshot.data().firstname + ' ' + authorSnapshot.data().lastname;
-                        return articleData;
-                    }*/
                     return articleData;
                 });
             } else {

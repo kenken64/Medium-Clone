@@ -49,19 +49,38 @@
 
 
 @media all and (min-width: 600px) {
-.aside { flex: 1 auto; }
+    .aside { flex: 1 auto; }
 }
 
 @media all and (min-width: 800px) {
-.aside-2 { order: 1; } 
-.aside-1 { order: 2; } 
-.main    { order: 3; }
+    .aside-2 { order: 1; } 
+    .aside-1 { order: 2; } 
+    .main    { order: 3; }
 }
 
 body {
-padding: 2em; 
+    padding: 2em; 
 }
 
 table {
   width: 100%;
+}
+
+.search-container {
+    display: flex;
+    flex-direction: column;
+    min-width: 300px;
+}
+
+.search-header {
+    min-height: 64px;
+    padding: 8px 24px 0;
+}
+.mat-form-field {
+    font-size: 14px;
+    width: 100%;
+}
+.mat-table {
+    overflow: auto;
+    max-height: 500px;
 }
