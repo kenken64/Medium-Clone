@@ -1,7 +1,7 @@
 export interface Article {
     id?: string;
     title: string;
-    author: string;
+    author?: string;
     authorName?: string;
     publish_date: Date;
     category: string;

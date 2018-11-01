@@ -253,7 +253,6 @@ app.post(API_URI + '/changePassword', auth.required, bodyParser.urlencoded({ ext
     // To protect against the scenario where user is already logged in, but someone else use his account and tries to change password.
     let oldPassword = changePasswordObj.password;
     console.log("oldPassword =", oldPassword);
-    //console.log("changePasswordObj.id =", changePasswordObj.id);
     findUserByEmail([req.payload.username]).then((result) => {
         if (result.length > 0) {
             if (isPasswordValid(oldPassword, result[0].password, result[0].salt)) {
@@ -452,13 +451,58 @@ app.get(API_URI + '/articles', (req, res) => {
     .then(snapshot => {
         // No need to push to an array because we're using map here to create a new array
         let snapshotPromises = snapshot.docs.map(doc => {
-            const authorId = doc.data().author;
+            //const authorId = doc.data().author;
             let articleData = doc.data();
-
+            /*
             if (typeof authorId !== 'undefined') {
-                const authorRef = authorsCollection.doc(authorId);
-                return authorRef.get().then(authorSnapshot => {
+                //const authorRef = authorsCollection.doc(authorId);
+                return authorsCollection.
+                    get().then(authorSnapshot => {
                     articleData.authorName = authorSnapshot.data().firstname + ' ' + authorSnapshot.data().lastname;
+                    return articleData;
+                });
+            } else {
+                return articleData;
+            }*/
+            return articleData;
+        });
+
+        Promise.all(snapshotPromises).then(results => {
+            console.log(results);
+            res.status(200).json(results);
+        });
+   })
+   .catch(err => {
+        console.log('Error getting documents', err);
+        res.status(500).json(err);
+  }); 
+});
+
+
+// GET array of articles by topic
+app.get(API_URI + '/articlesByAuthor', auth.required, bodyParser.urlencoded({ extended: true}), bodyParser.json({ limit: "50MB" }), (req, res) => {
+    console.log("articlesByAuthor0");
+    console.log()
+    articlesCollection
+    .where('author', '==', req.payload.username)
+    .get()
+    .then(snapshot => {
+        // No need to push to an array because we're using map here to create a new array
+        let snapshotPromises = snapshot.docs.map(doc => {
+            const authorEmail = doc.data().author;
+            let articleData = doc.data();
+            console.log("articlesByAuthor1" + authorEmail);
+            if (typeof authorEmail !== 'undefined') {
+                console.log("articlesByAuthor2" + authorEmail);
+                return authorsCollection
+                    .where('email', '==', req.payload.username)
+                    .get().then(authorSnapshot => {
+                    //console.log(authorSnapshot.data());
+                    /*
+                    if(typeof(authorSnapshot.data()) !== 'undefined'){
+                        articleData.authorName = authorSnapshot.data().firstname + ' ' + authorSnapshot.data().lastname;
+                        return articleData;
+                    }*/
                     return articleData;
                 });
             } else {
@@ -516,6 +560,8 @@ app.post(API_URI + '/authors', auth.required, bodyParser.urlencoded({ extended: 
 // Add one article 
 app.post(API_URI + '/articles', auth.required, bodyParser.urlencoded({ extended: true}), bodyParser.json({ limit: "50MB" }), (req, res) => {
     let article = {... req.body };
+    console.log(req.payload.username);
+    article.author = req.payload.username;
     console.log(".....articles" + JSON.stringify(article));
     articlesCollection
         .add(article)

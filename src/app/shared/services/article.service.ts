@@ -8,11 +8,16 @@ import { ApiService } from './api.service';
 })
 export class ArticleService {
   private articlesRootApiUrl = `/api/articles`;
+  private articlesByAuthorRootApiUrl = `/api/articlesByAuthor`;
 
   constructor(private http: ApiService) { }
 
   public getArticles(): Observable<Article[]> {
     return this.http.get(this.articlesRootApiUrl);
+  }
+
+  public getArticlesByAuthor(): Observable<Article[]> {
+    return this.http.get(this.articlesByAuthorRootApiUrl);
   }
 
   publishArticle(article): Observable<any> {
