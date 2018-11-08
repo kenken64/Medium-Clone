@@ -189,7 +189,7 @@ app.post(API_URI + '/login', bodyParser.urlencoded({ extended: true}), bodyParse
         }, process.env.JWT_SECRET);
         
         if(user){
-        //  console.log("JWT token > ", token);
+          console.log("user user user > ", user);
           user.token = token;
           return res.json({user: user});
         } else {
@@ -202,9 +202,25 @@ app.post(API_URI + '/login', bodyParser.urlencoded({ extended: true}), bodyParse
 
 
 app.get(API_URI + '/user', auth.required, function(req, res, next){
-    console.log(">>>>>> token !" + auth.getToken(req));
-    console.log("req.payload" + JSON.stringify(req.payload));
-    return res.json({});
+    if(typeof(auth.getToken(req)) !== 'undefined'){
+        findUserByEmail([req.payload.username]).then((result)=>{
+            if(result.length > 0){
+                return res.status(200).json({
+                    loginOk: true, 
+                    jwtToken: auth.getToken(req),
+                    user: result[0]
+                });
+                
+            }else{
+                return res.status(500).json({ loginOk: false });
+            }
+        }).catch((error)=>{
+            return res.status(500).json({ loginOk: false });
+        })
+        
+    }else{
+        return res.status(500).json({ loginOk: false });
+    }
 });
 
 

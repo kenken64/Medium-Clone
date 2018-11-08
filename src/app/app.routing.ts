@@ -87,7 +87,7 @@ const appRoutes = [
     ],
     imports: [
       BrowserModule,
-      RouterModule.forRoot(appRoutes , { enableTracing: true, preloadingStrategy: PreloadAllModules })
+      RouterModule.forRoot(appRoutes , { enableTracing: false, preloadingStrategy: PreloadAllModules })
     ],
     exports: [ RouterModule ],
     providers: []

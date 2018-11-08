@@ -12,6 +12,7 @@ export class SecurityService {
   private API:string = `/api`
   private registerRootApiUrl = `${this.API}/register`;
   private loginRootApiUrl = `${this.API}/login`;
+  private checkUserLoginRootApiUrl = `${this.API}/user`;
   private resetPasswordRootApiUrl = `${this.API}/resetPassword`;
   private isResetIdOkRootApiUrl = `${this.API}/isResetIdOk`;
   private changePasswordRootApiUrl = `${this.API}/changePassword`;
@@ -24,7 +25,17 @@ export class SecurityService {
   public isAuthenticated = this.isAuthenticatedSubject.asObservable();
 
   constructor( private http: ApiService,
-    private jwtService: JwtService) { }
+    private jwtService: JwtService) { 
+      console.log(this.currentUserSubject.value);
+      this.http.get(this.checkUserLoginRootApiUrl).subscribe((result)=>{
+        console.log(result.jwtToken);
+        this.jwtService.saveToken(result.jwtToken);
+        // Set current user data into observable
+        this.currentUserSubject.next(result.user);
+        // Set isAuthenticated to true
+        this.isAuthenticatedSubject.next(true);
+      });
+  }
 
   register(user){
     console.log("Register srvice !")

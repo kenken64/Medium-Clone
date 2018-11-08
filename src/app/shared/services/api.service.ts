@@ -17,8 +17,10 @@ export class ApiService {
 
   private formatErrors<T>(error: any) {
     return (error: any): Observable<T> => {
-      console.log(JSON.stringify(error));
-      this.showErrorMessage(JSON.stringify(error.error));
+      console.log(">>>> " + JSON.stringify(error));
+      if(error.status != 401){
+        this.showErrorMessage(JSON.stringify(error.error));
+      }
       return throwError(error || 'generic backend error');
     }
   }

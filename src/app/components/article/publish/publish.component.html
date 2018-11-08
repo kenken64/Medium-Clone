@@ -6,22 +6,16 @@
     </mat-toolbar-row>
 </mat-toolbar>
 <br><br><br>
+
 <aside class="aside aside-1">
         <mat-grid-list cols="3">
                 <mat-grid-tile colspan="2" rowspan="1">  
+                    
         <form class="example-form" [formGroup]="publishArticleForm">
                 <mat-form-field class="example-full-width">
                     <input matInput placeholder="Title" formControlName="title">
                 </mat-form-field>
 
-                <!--
-                <mat-form-field class="example-full-width">
-                    <mat-select required formControlName="author">
-                    <mat-option *ngFor="let author of authors" value="{{author.id}}">{{author.result.firstname}} {{author.result.lastname}}</mat-option>
-                    </mat-select>
-                    <mat-label><mat-icon>book</mat-icon> <b> Author</b> <i> label</i></mat-label>
-                </mat-form-field>-->
-        
                 <mat-form-field class="example-full-width">
                     <mat-select required formControlName="category">
                         <mat-option *ngFor="let category of categories" value="{{category.id}}">{{category.result.name}}</mat-option>
@@ -39,7 +33,9 @@
 
 <article class="main">
         <div class="search-container mat-elevation-z8">
-
+                <mat-form-field class="searchfield">
+                        <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+                </mat-form-field>
     <mat-table [dataSource]="dataSource" matSort>
     
         <ng-container matColumnDef="category">
