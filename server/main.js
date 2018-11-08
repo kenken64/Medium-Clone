@@ -22,6 +22,7 @@ const API_URI = "/api";
 app.use(cors());
 app.use(passport.initialize());
 //set GOOGLE_APPLICATION_CREDENTIALS=/Users/phangty/Projects/paf-day26/onfire.json
+// set GOOGLE_APPLICATION_CREDENTIALS=D:\Projects\meenee\server\ngx-blog.json
 // Initialize Firebase
 const credFile = process.env.Svc_Cred_File || "./ngx-blog.json";
 
@@ -450,7 +451,8 @@ app.get(API_URI + '/authors/:id', auth.required,(req, res) => {
             firstname : result.data().firstname,
             lastname: result.data().lastname,
             email: result.data().email,
-            profile: result.data().profile
+            profile: result.data().profile,
+            thumbnail_url: result.data().thumbnail_url
         }
         res.status(200).json(returnResult)
      })
@@ -638,9 +640,12 @@ app.put(API_URI + '/article/:id', auth.required, bodyParser.urlencoded({ extende
 });
 
 
-//Upload single image
-app.post(API_URI + '/upload', auth.required, googleMulter.single('img'), (req, res) => {
+//Upload single image auth.required,
+app.post(API_URI + '/upload', googleMulter.single('img'), (req, res) => {
         console.log("....uploading: ");
+        console.log(req.file);
+        console.log(req);
+        
         if(req.file != null) {
            console.log("uploaded");
            uploadToFirebaseStorage(req.file).then((result) => {
@@ -651,6 +656,7 @@ app.post(API_URI + '/upload', auth.required, googleMulter.single('img'), (req, r
                res.status(500).json(error);
            })
         } else {
+            console.log("NULL > " + req.file);
             res.status(500).json({ error: "error in uploading"});
         }
     });

@@ -25,6 +25,9 @@ import { startWith } from 'rxjs/operators';
 
         if(matFileUploadQueue) {
           this.httpUrl = matFileUploadQueue.httpUrl || this.httpUrl;
+          console.log(matFileUploadQueue.httpRequestHeaders);
+          console.log(this.httpRequestHeaders);
+          
           this.httpRequestHeaders = matFileUploadQueue.httpRequestHeaders || this.httpRequestHeaders;
           this.httpRequestParams = matFileUploadQueue.httpRequestParams || this.httpRequestParams;
           this.fileAlias = matFileUploadQueue.fileAlias || this.fileAlias;

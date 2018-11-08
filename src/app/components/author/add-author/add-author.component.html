@@ -31,7 +31,8 @@
                 <input id="singleFile" type="file" style="display:none" [fileUploadInputFor]= "fileUploadQueue"/>
                 <mat-file-upload-queue #fileUploadQueue
                     [fileAlias]="'img'"
-                    [httpUrl]="uploadAPI">
+                    [httpUrl]="uploadAPI"
+                    [httpRequestHeaders]="{}">
                     <mat-file-upload [file]="file" (onUpload)="doneUpload($event)" [id]="i" *ngFor="let file of fileUploadQueue.files; let i = index"></mat-file-upload>
                 </mat-file-upload-queue>
               

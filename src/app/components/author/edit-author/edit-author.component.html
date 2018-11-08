@@ -5,8 +5,11 @@
         <button mat-raised-button color="accent" (click)="onSubmit()">Save</button>
     </mat-toolbar-row>
 </mat-toolbar>
-<br>
+<br><br>
 <mat-grid-list cols="3">
+    <mat-grid-tile colspan="2" rowspan="1">
+            <img width="450" height="400" src="{{author?.thumbnail_url}}"/><br>
+    </mat-grid-tile>
     <mat-grid-tile colspan="2" rowspan="1">
         <div>
             <form class="example-form" [formGroup]="editAuthorForm">
@@ -21,6 +24,14 @@
                 <mat-form-field class="example-full-width">
                     <input matInput placeholder="test@test.com" formControlName="email">
                 </mat-form-field>
+
+                <button mat-icon-button onClick="document.getElementById('singleFile').click()"><mat-icon>cloud_upload</mat-icon></button>
+                <input id="singleFile" type="file" style="display:none" [fileUploadInputFor]= "fileUploadQueue"/>
+                <mat-file-upload-queue #fileUploadQueue
+                    [fileAlias]="'img'"
+                    [httpUrl]="uploadAPI">
+                    <mat-file-upload [file]="file" (onUpload)="doneUpload($event)" [id]="i" *ngFor="let file of fileUploadQueue.files; let i = index"></mat-file-upload>
+                </mat-file-upload-queue>
 
                 <mat-form-field class="example-full-width">
                   <textarea matInput rows="15" cols="50" placeholder="Author's Profile" formControlName="profile"></textarea>

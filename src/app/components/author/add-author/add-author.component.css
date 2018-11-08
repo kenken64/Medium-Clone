@@ -23,4 +23,6 @@
     margin: 0 40px;
     left: 50%;
     margin-left: -4em;
+    opacity: 0.5;
+    filter: alpha(opacity=50); /* For IE8 and earlier */
 }
