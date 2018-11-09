@@ -3,15 +3,15 @@
 ```sql
 CREATE TABLE `user` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `email` varchar(500) DEFAULT NULL,
-  `password` text,
+  `password` text NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `fullname` text,
   `salt` text,
-  `fullname` varchar(1000) DEFAULT NULL,
   `reset_id` varchar(1000) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
-
+  UNIQUE KEY `id_UNIQUE` (`id`),
+  UNIQUE KEY `email_UNIQUE` (`email`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8$$
 ```
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 6.2.3.
 

@@ -39,8 +39,8 @@
     <mat-table [dataSource]="dataSource" matSort>
     
         <ng-container matColumnDef="category">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> Catgory </mat-header-cell>
-        <mat-cell *matCellDef="let row" style="cursor: pointer;"> {{row.category}} </mat-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Category </mat-header-cell>
+        <mat-cell *matCellDef="let row" style="cursor: pointer;"> {{row.category_name}} </mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="title">

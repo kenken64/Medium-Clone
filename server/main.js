@@ -484,10 +484,8 @@ app.get(API_URI + '/articles', (req, res) => {
 });
 
 
-// GET array of articles by topic
 app.get(API_URI + '/articlesByAuthor', auth.required, bodyParser.urlencoded({ extended: true}), bodyParser.json({ limit: "50MB" }), (req, res) => {
     console.log("articlesByAuthor0");
-    console.log()
     articlesCollection
     .where('author', '==', req.payload.username)
     .get()

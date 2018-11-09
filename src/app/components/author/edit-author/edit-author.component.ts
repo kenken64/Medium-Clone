@@ -80,6 +80,7 @@ export class EditAuthorComponent implements OnInit {
       console.log(evtObj.body);
         this.currentUploadURL = evtObj.body;
         this.multipleFilesUpload.push(this.currentUploadURL);
+        this.author.thumbnail_url = this.multipleFilesUpload[0],
         this.spinnerFlag = false;
     }
     
