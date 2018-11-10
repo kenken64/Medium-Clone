@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Input, OnDestroy, Output, Inject, forwardRef, QueryList, ContentChildren } from '@angular/core';
 import { HttpClient, HttpEventType, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Subscription } from 'rxjs';
-import { merge } from 'rxjs';
+import { Subscription ,  merge } from 'rxjs';
 import { startWith } from 'rxjs/operators';
 
 /**

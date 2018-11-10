@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable ,  throwError } from 'rxjs';
 import { MatSnackBar } from '@angular/material';
-import { throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 @Injectable({
